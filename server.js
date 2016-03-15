@@ -2,8 +2,7 @@ var express = require('express');
 var Parse = require('parse/node');
 var ParseServer = require('parse-server').ParseServer;
 var bodyParser = require('body-parser');
-var mailgunConfig = require('./mailgunAdapter.js');
-var mailgun = mailgunConfig({ apiKey: 'key-dc299e12a327978cf917a45156cea004', domain: 'sandbox05212a27b5d24da3bdc19befaf7aeffe.mailgun.org' });
+var mailgun = require('mailgun-js')({ apiKey: 'key-dc299e12a327978cf917a45156cea004', domain: 'sandbox05212a27b5d24da3bdc19befaf7aeffe.mailgun.org' });
 
 var app = express();
 
@@ -43,7 +42,16 @@ app.post('/register', bodyParser.urlencoded({ extended: false }), (req, res) => 
 		}
 	});
 
-	mailgun.sendMail(req.body.email, "Oh hey!", "This is the body of the email.");
+	var data = {
+		from: 'Excited User <alexjhannan@gmail.com>',
+		to: 'alexjhannan@gmail.com',
+		subject: 'Surprise Mothafucka',
+		text: 'This is an email body.'
+	};
+
+	mailgun.messages().send(data, (error, body) => {
+		console.log(body);
+	});
 
 	res.sendFile(__dirname + '/register.html');
 });
