@@ -24,44 +24,22 @@ angular.module('localParseServer.changeEmail', ['ui.router'])
 			return alert("New email and confirm email do not match.");
 		}
 
-		// convert to cloud code
-
-		var User = Parse.Object.extend("User");
-		var query = new Parse.Query(User);
-
-		console.log(account.email);
-		console.log(account.password);
-
-		query.equalTo("username", account.email);
-		query.equalTo("password", account.password);
-
-		query.find({
-			success (data) {
-
-				console.log(data);
-				var user = data[0];
-
-				if (!user) {
-					return console.log("Incorrect credentials.");
+		// use Parse Cloud to check if login is correct
+		Parse.Cloud.run("logIn", {account: $scope.account}).then(user => {
+			user.set("username", account.newEmail);
+			user.save({
+				success (user) {
+					console.log("Successfully changed email to " + user.getUsername());
+					// TODO: webhook -> verify new email
+					// TODO: webhook -> notify old email
+				},
+				error (err) {
+					console.log(err);
 				}
-
-				console.log(user.getUsername());
-				console.log(user.get("password"));
-
-				user.set("username", account.newEmail);
-				user.save().then({
-					success (user) {
-						console.log(user);
-						console.log("Email succcessfully changed to " + user.getUsername());
-						// TODO: req to webhook -> notify old email
-						// TODO: req to webhook -> verify new email
-					},
-					error (err) {
-						console.log("Something went wrong... " + err);
-					}
-				})
-			}
-		})
+			});
+		}, err => {
+			alert("Error: " + err.message);
+		});
 	}
 
 	$scope.logOut = () => {

@@ -1,10 +1,10 @@
 var express = require('express');
+var app = express();
 var Parse = require('parse/node');
 var ParseServer = require('parse-server').ParseServer;
 var bodyParser = require('body-parser');
-var mailgun = require('mailgun-js')({ apiKey: 'key-dc299e12a327978cf917a45156cea004', domain: 'sandbox05212a27b5d24da3bdc19befaf7aeffe.mailgun.org' });
+var mailAdapter = require('./server/mailgun/mailgunAdapter.js');
 var md5 = require("md5");
-var app = express();
 
 // load static files in public directory
 app.use(express.static('client'));
@@ -13,7 +13,7 @@ app.use(express.static('client'));
 // and the location to your Parse cloud code
 var api = new ParseServer({
 	databaseURI: 'mongodb://localhost:27017/dev',
-	cloud: '/Users/AlexMac/Projects/local-parse-server/node_modules/parse-server/lib/cloud/main.js',
+	cloud: '/Users/AlexMac/Projects/local-parse-server/server/cloud/main.js',
 	appId: 'localParseServer',
 	masterKey: 'mySecretMasterKey',
 	javaScriptKey: 'mySecretJavaScriptKey',
