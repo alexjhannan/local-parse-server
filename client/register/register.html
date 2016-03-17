@@ -1,5 +1,5 @@
-<h3>Log In</h3>
-<form ng-submit="logIn(account)">
+<h3>Register</h3>
+<form ng-submit="signUp(account)">
 	<label>Mail: </label>
 	<br />
 	<input ng-model="account.email" type="email" />
@@ -8,10 +8,10 @@
 	<br />
 	<input ng-model="account.password" type="password" />
 	<br />
-	<input type="submit" value="Log In" />
+	<input type="submit" value="Register" />
 </form>
 
 <hr />
-<span>Navigation: </span>
-<button ng-click="goToState('register')">Register</button>
+<span>Navigation :</span>
+<button ng-click="goToState('login')">Log In</button>
 <button ng-click="goToState('lostPassword')">Lost Password</button>

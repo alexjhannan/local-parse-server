@@ -1,5 +1,10 @@
-html{
+html {
 	background-color: #222;
 	color: #ddd;
 	font-family: monospace;
+}
+
+label, input {
+	margin-left: 20px;
+	margin-bottom: 7px;
 }

@@ -10,13 +10,21 @@ angular.module('localParseServer.home', ['ui.router'])
 	})
 }])
 
-.controller('HomeCtrl', ['$scope', '$state', function ($scope, $state) {
-	if (!Parse.User.current()) {$state.go("login")}
+.controller('HomeCtrl', ['$scope', '$state', '$timeout', function ($scope, $state, $timeout) {
+	// if client isn't logged in, send back to login page
+	if (!Parse.User.current()) {
+		alert('This page is only accessible to logged in users.'); 
+		$state.go('login');
+	}
 
 	$scope.accountName = Parse.User.current().getUsername();
 
 	$scope.logOut = () => {
-		console.log("attempting to log out...");
 		Parse.User.logOut();
+		$state.go("login");
+	}
+
+	$scope.goToState = state => {
+		$state.go(state);
 	}
 }])
