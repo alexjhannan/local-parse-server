@@ -77,6 +77,8 @@ Parse.Cloud.define('logIn', function (req, res) {
   Parse.User.logIn(account.email, account.password, {
     success(user) {
       res.success(user);
+      // TODO: Leaving this logout in here to be safe; may affect multiple users running this function simultaneously
+      Parse.User.logOut();
     },
     error() {
       res.error('Cannot log in with those credentials.');
