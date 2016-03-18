@@ -110,16 +110,33 @@ app.post("/sendPasswordReset", (req, res) => {
 
 	var body = "Click the link below to reset your password.";
 
-	var link = "http://localhost:3000/#/changePassword";
+	// build hash for password reset link
 
-	mailAdapter.sendEmail(req.body.email, subject, body, link).then(
-		() => {
-			res.send("Password reset email sent successfully.");
+	var query = new Parse.Query("User");
+	query.equalTo("username", req.body.email);
+
+	query.first({
+		success (user) {
+			var toHash = user.getUsername() + user.get("createdAt") + user.id + "passReset";
+			var hash = md5(toHash);
+
+			var link = "http://localhost:3000/#/changePassword/" + req.body.email + "/" + hash;
+
+			mailAdapter.sendEmail(req.body.email, subject, body, link).then(
+				() => {
+					res.send("Password reset email sent successfully.");
+				},
+				() => {
+					res.send("Error: Password reset email failed.");
+				}
+			);
 		},
-		() => {
-			res.send("Error: Password reset email failed.");
+		error (err) {
+			// if hash fails to build, fail out of the webhook
+			console.log("Hash build failed, exiting webhook.");
+			return console.log(err);
 		}
-	);
+	});
 });
 
 // ----------------------------------------------
