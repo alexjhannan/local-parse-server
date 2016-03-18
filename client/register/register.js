@@ -10,7 +10,7 @@ angular.module('localParseServer.register', ['ui.router'])
 	})
 }])
 
-.controller('RegisterCtrl', ['$scope', '$state', function ($scope, $state) {
+.controller('RegisterCtrl', ['$scope', '$state', '$http', function ($scope, $state, $http) {
 	$scope.account = {};
 
 	$scope.signUp = account => {
@@ -18,7 +18,11 @@ angular.module('localParseServer.register', ['ui.router'])
 		Parse.User.signUp(account.email, account.password, {}, {
 			success (user) {
 				alert("Successfully signed up as " + user.getUsername());
-				// TODO: req to webhook -> verify email link
+				// send verification email to new account
+				$http.post('/verifyEmail', {email: account.email}).then(
+					data => console.log(data),
+					err => console.log(err)
+				);
 				$state.go('home');
 			},
 			error (err) {

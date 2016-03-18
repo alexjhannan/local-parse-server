@@ -10,7 +10,7 @@ angular.module('localParseServer.lostPassword', ['ui.router'])
 	})
 }])
 
-.controller('LostPasswordCtrl', ['$scope', '$state', function ($scope, $state) {
+.controller('LostPasswordCtrl', ['$scope', '$state', '$http',  function ($scope, $state, $http) {
 	$scope.account = {};
 
 	$scope.lostPassword = account => {
@@ -24,9 +24,14 @@ angular.module('localParseServer.lostPassword', ['ui.router'])
 				var user = data[0];
 				alert("If that account exists, an email has been sent with a link to reset your password.");
 				if (user) {
-					// TODO: req to webhook -> reset password link
-					console.log("Sending request to webhook...");
+					// send password reset email to that user
+					$http.post('/sendPasswordReset', {email: account.email}).then(
+						data => { console.log(data) },
+						err => { console.log(err) }
+					);
 				}
+
+				$state.go('login');
 			},
 			error (err) {
 				alert('Something went wrong...' + err);
