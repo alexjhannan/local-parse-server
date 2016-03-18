@@ -32,17 +32,15 @@ angular.module('localParseServer.changeEmail', ['ui.router'])
 					console.log("Successfully changed email to " + user.getUsername());
 
 					// send verification email to new email address
-					$http.post('/verifyEmail', {email: account.newEmail}).then(data => {
-						console.log("Verify success!");
-					}, err => {
-						console.log("Verify error...");
-					});
+					$http.post('/verifyEmail', {email: account.newEmail}).then(
+						data => { console.log(data) }, 
+						err => { console.log(err) }
+					);
 					// send notification email to old email address
-					$http.post('/notifyEmailChange', {oldEmail: account.email, newEmail: account.newEmail}).then(data => {
-						console.log("Notify success!");
-					}, err => {
-						console.log("Notify error...");
-					});
+					$http.post('/notifyEmailChange', {oldEmail: account.email, newEmail: account.newEmail}).then(
+						data => { console.log(data) },
+						err => { console.log(err) }
+					);
 
 					$state.go('home');
 				},
