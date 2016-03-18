@@ -8,6 +8,8 @@ var md5 = require("md5");
 
 // load static files in public directory
 app.use(express.static('client'));
+// allow access to node modules (so angular-md5 can load)
+app.use(express.static('node_modules/angular-md5'));
 
 // Specify the connection string for your mongodb database
 // and the location to your Parse cloud code
@@ -55,16 +57,33 @@ app.post("/verifyEmail", (req, res) => {
 
 	var body = "Please verify your email by clicking the link below.";
 
-	var link = "http://www.google.com";
+	// build hash for verification link
 
-	mailAdapter.sendEmail(req.body.email, subject, body, link).then(
-		() => {
-			res.send("Verification email sent successfully.");
+	var query = new Parse.Query("User");
+	query.equalTo("username", req.body.email);
+
+	query.first({
+		success (user) {
+			var toHash = user.getUsername() + user.get("createdAt") + user.id;
+			var hash = md5(toHash);
+
+			var link = "http://localhost:3000/#/verifyEmail/" + req.body.email + "/" + hash;
+
+			mailAdapter.sendEmail(req.body.email, subject, body, link).then(
+				() => {
+					res.send("Verification email sent successfully.");
+				},
+				() => {
+					res.send("Error: Verification email failed.");
+				}
+			);
 		},
-		() => {
-			res.send("Error: Verification email failed.");
+		error (err) {
+			// if hash fails to build, fail out of the webhook
+			console.log("Hash build failed, exiting webhook.");
+			return console.log(err);
 		}
-	);
+	});
 });
 
 app.post("/notifyPasswordReset", (req, res) => {
@@ -91,7 +110,7 @@ app.post("/sendPasswordReset", (req, res) => {
 
 	var body = "Click the link below to reset your password.";
 
-	var link = "http://www.google.com";
+	var link = "http://localhost:3000/#/changePassword";
 
 	mailAdapter.sendEmail(req.body.email, subject, body, link).then(
 		() => {

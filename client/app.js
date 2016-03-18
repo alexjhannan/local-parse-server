@@ -2,6 +2,7 @@
 
 angular.module("localParseServer", [
 	'ui.router',
+	'angular-md5',
 	'localParseServer.login',
 	'localParseServer.home',
 	'localParseServer.lostPassword',
