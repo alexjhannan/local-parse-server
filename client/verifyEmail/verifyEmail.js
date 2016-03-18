@@ -16,6 +16,7 @@ angular.module('localParseServer.verifyEmail', ['ui.router'])
 
 	query.first({
 		success(user) {
+			if (!user) { $scope.hashDoesNotMatch = true; return $scope.$apply();}
 			var toHash = user.getUsername() + user.get("createdAt") + user.id;
 			var hash = md5.createHash(toHash);
 
