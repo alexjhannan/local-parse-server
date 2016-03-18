@@ -21,10 +21,15 @@ var sendEmail = (email, subject, body, link) => {
 		html: html,
 	};
 
-	// fire off the mail
-	mailgun.messages().send(data, (err, body) => {
-		if (err) console.log(err);
-		console.log(body);
+	return new Promise((resolve, reject) => {
+		mailgun.messages().send(data, (err, body) => {
+			if (typeof err !== 'undefined') {
+				console.log("Error sending mail...");
+				reject(err);
+			}
+			console.log("Mail sent successfully");
+			resolve(body);
+		});
 	});
 }
 

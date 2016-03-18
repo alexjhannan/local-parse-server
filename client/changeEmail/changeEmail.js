@@ -10,7 +10,7 @@ angular.module('localParseServer.changeEmail', ['ui.router'])
 	})
 }])
 
-.controller('ChangeEmailCtrl', ['$scope', '$state', function ($scope, $state) {
+.controller('ChangeEmailCtrl', ['$scope', '$state', '$http', function ($scope, $state, $http) {
 	// if client isn't logged in, send back to login page
 	if (!Parse.User.current()) {
 		alert('This page is only accessible to logged in users.'); 
@@ -30,8 +30,21 @@ angular.module('localParseServer.changeEmail', ['ui.router'])
 			user.save({
 				success (user) {
 					console.log("Successfully changed email to " + user.getUsername());
-					// TODO: webhook -> verify new email
-					// TODO: webhook -> notify old email
+
+					// send verification email to new email address
+					$http.post('/verifyEmail', {email: account.newEmail}).then(data => {
+						console.log("Verify success!");
+					}, err => {
+						console.log("Verify error...");
+					});
+					// send notification email to old email address
+					$http.post('/notifyEmailChange', {oldEmail: account.email, newEmail: account.newEmail}).then(data => {
+						console.log("Notify success!");
+					}, err => {
+						console.log("Notify error...");
+					});
+
+					$state.go('home');
 				},
 				error (err) {
 					console.log(err);

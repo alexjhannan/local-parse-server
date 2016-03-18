@@ -26,6 +26,87 @@ app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/client/index.html');
 });
 
+app.use(bodyParser.json());
+
+// ----------------------------------------------
+//             WEBHOOKS
+// ----------------------------------------------
+app.post("/notifyEmailChange", (req, res) => {
+	console.log("Sending email change notification to: " + req.body.oldEmail);
+
+	var subject = "Your Email Address Has Been Changed";
+
+	var body = "Your email address has been changed to: " + req.body.newEmail + ". If you did not authorize this request, please contact support.";
+
+	mailAdapter.sendEmail(req.body.oldEmail, subject, body).then(
+		() => {
+			res.send("Email change notification sent successfully.");
+		},
+		() => {
+			res.send("Error: Email change notification failed.");
+		}
+	);
+});
+
+app.post("/verifyEmail", (req, res) => {
+	console.log("Sending verification email to: " + req.body.email);
+
+	var subject = "Email Verification";
+
+	var body = "Please verify your email by clicking the link below.";
+
+	var link = "http://www.google.com";
+
+	mailAdapter.sendEmail(req.body.email, subject, body, link).then(
+		() => {
+			res.send("Verification email sent successfully.");
+		},
+		() => {
+			res.send("Error: Verification email failed.");
+		}
+	);
+});
+
+app.post("/notifyPasswordReset", (req, res) => {
+	console.log("Sending password change notification to: " + req.body.email);
+
+	var subject = "Your Password Has Been Changed";
+
+	var body = "Your password has been changed. If you did not authorize this change, please contact support immediately.";
+
+	mailAdapter.sendEmail(req.body.email, subject, body).then(
+		() => {
+			res.send("Notify password reset email sent successfully.");
+		},
+		() => {
+			res.send("Error: Notify password reset email failed.");
+		}
+	);
+});
+
+app.post("/sendPasswordReset", (req, res) => {
+	console.log("Sending password reset email to: " + req.body.email);
+
+	var subject = "Password Reset";
+
+	var body = "Click the link below to reset your password.";
+
+	var link = "http://www.google.com";
+
+	mailAdapter.sendEmail(req.body.email, subject, body, link).then(
+		() => {
+			res.send("Password reset email sent successfully.");
+		},
+		() => {
+			res.send("Error: Password reset email failed.");
+		}
+	);
+});
+
+// ----------------------------------------------
+//             OLD ROUTES
+// ----------------------------------------------
+
 app.post('/register', bodyParser.urlencoded({ extended: false }), (req, res) => {
 	// create a user verification string
 	var email = req.body.email;
