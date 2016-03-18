@@ -6,7 +6,9 @@ angular.module("localParseServer", [
 	'localParseServer.home',
 	'localParseServer.lostPassword',
 	'localParseServer.register',
-	'localParseServer.changeEmail'
+	'localParseServer.changeEmail',
+	'localParseServer.changePassword',
+	'localParseServer.verifyEmail'
 	])
 	.run(function(){
 		Parse.initialize('localParseServer', 'mySecretJavaScriptKey');
