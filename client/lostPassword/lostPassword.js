@@ -26,8 +26,8 @@ angular.module('localParseServer.lostPassword', ['ui.router'])
 				if (user) {
 					// send password reset email to that user
 					$http.post('/sendPasswordReset', {email: account.email}).then(
-						data => { console.log(data) },
-						err => { console.log(err) }
+						data => console.log(data),
+						err => console.log(err)
 					);
 				}
 
